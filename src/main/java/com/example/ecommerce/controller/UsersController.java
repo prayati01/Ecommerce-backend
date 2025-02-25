@@ -17,9 +17,16 @@ public class UsersController {
     UsersService usersService;
 
     @PostMapping("/addUser")
-    public ResponseEntity<Users> addUser(@RequestBody Users user) {
-        Users newUser = usersService.addUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    public ResponseEntity<?> addUser(@RequestBody Users user) {
+        //earlier we wrote     public ResponseEntity<Users> addUser(@RequestBody Users user) {
+        //but it gave error bcos in catch block we return a string (since e.getmessage() but here we were giving <User>
+        // so we gave return type as a wildcard (<?>)
+        try {
+            Users newUser = usersService.addUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     @PostMapping("/loginUser")

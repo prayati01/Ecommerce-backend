@@ -14,7 +14,14 @@ public class UsersService {
     private UsersRepo usersRepo;
 
     public Users addUser(Users user){
-        //to check if yser with sam email alre
+        //to check if user with same email already exists
+        if (usersRepo.findByEmail(user.getEmail()).isPresent()){
+            throw new IllegalArgumentException("Email already registered");
+        }
+        //to check if user wiht same username already exists
+        if (usersRepo.findByUsername(user.getUsername()).isPresent()){
+            throw new IllegalArgumentException("Username not available");
+        }
         return usersRepo.save(user);
     }
 
@@ -24,10 +31,10 @@ public class UsersService {
             return false; //user not found
         }
 
-        Users user1 = userOptional.get();//extracting user from optional
+        Users userFromDb = userOptional.get();//extracting user from optional
 
         //checking ifpsd match
-        if(!user1.getPassword().equals(password)){
+        if(!userFromDb.getPassword().equals(password)){
             return false; //incorrecct passowrd
         }
         return true;//sucessfull logun
